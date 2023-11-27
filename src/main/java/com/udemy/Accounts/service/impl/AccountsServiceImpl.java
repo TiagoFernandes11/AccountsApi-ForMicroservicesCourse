@@ -12,6 +12,7 @@ import com.udemy.Accounts.service.IAccountsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Random;
 
@@ -31,6 +32,7 @@ public class AccountsServiceImpl implements IAccountsService {
             throw new CustomerAlreadyExistException("Customer already registred with mobileNumber: "
                     + customerDTO.getMobileNumber());
         }
+        customer.setCreatedDt(LocalDateTime.now());
         Account account = createNewAccount(customerRepository.save(customer));
         accountRepository.save(account);
     }
@@ -43,6 +45,7 @@ public class AccountsServiceImpl implements IAccountsService {
         newAccount.setAccountNumber(randomAccNumber);
         newAccount.setAccountType(AccountConstants.SAVINGS);
         newAccount.setBranchAddress(AccountConstants.ADDRESS);
+        newAccount.setCreatedDt(LocalDateTime.now());
         return newAccount;
     }
 }
