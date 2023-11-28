@@ -2,9 +2,12 @@ package com.udemy.Accounts.controller;
 
 import com.udemy.Accounts.constants.AccountConstants;
 import com.udemy.Accounts.dto.CustomerDTO;
+import com.udemy.Accounts.dto.ErrorResponseDTO;
 import com.udemy.Accounts.dto.ResponseDTO;
 import com.udemy.Accounts.service.IAccountsService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -103,7 +106,10 @@ public class AccountController {
             ),
             @ApiResponse(
                     responseCode = "500",
-                    description = "HTTP Status Internal Server Error"
+                    description = "HTTP Status Internal Server Error",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
             )
     }
     )
@@ -119,7 +125,7 @@ public class AccountController {
         }
         else {
             return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .status(HttpStatus.EXPECTATION_FAILED)
                     .body(new ResponseDTO(AccountConstants.STATUS_500, AccountConstants.MESSAGE_500));
 
         }
