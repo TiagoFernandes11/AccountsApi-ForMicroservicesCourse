@@ -1,10 +1,13 @@
 package com.udemy.Accounts.service.impl;
 
 import com.udemy.Accounts.constants.AccountConstants;
+import com.udemy.Accounts.dto.AccountsDTO;
 import com.udemy.Accounts.dto.CustomerDTO;
 import com.udemy.Accounts.entity.Account;
 import com.udemy.Accounts.entity.Customer;
 import com.udemy.Accounts.exception.CustomerAlreadyExistException;
+import com.udemy.Accounts.exception.ResourceNotFoundException;
+import com.udemy.Accounts.mapper.AccountsMapper;
 import com.udemy.Accounts.mapper.CustomerMapper;
 import com.udemy.Accounts.repository.AccountsRepository;
 import com.udemy.Accounts.repository.CustomerRepository;
@@ -47,5 +50,17 @@ public class AccountsServiceImpl implements IAccountsService {
         newAccount.setBranchAddress(AccountConstants.ADDRESS);
         newAccount.setCreatedDt(LocalDateTime.now());
         return newAccount;
+    }
+
+    @Override
+    public CustomerDTO fetchAccount(String mobileNumber) {
+        Optional<Customer> customer = customerRepository.findByMobileNumber(mobileNumber);
+        if(customer.isPresent()){
+            CustomerDTO customerDTO = CustomerMapper.mapToCustomerDto(customer.get(), new CustomerDTO());
+            Optional<Account> account = accountRepository.findByCustomerId(customer.get().getCustomerId());
+            customerDTO.setAccountsDTO(AccountsMapper.mapToAccountsDto(account.get(), new AccountsDTO()));
+            return customerDTO;
+        }
+        throw new ResourceNotFoundException("Customer", "mobileNumber", mobileNumber);
     }
 }
